@@ -60,6 +60,8 @@ export function useGameSocket(gameId: string, sessionId: string, name: string) {
         if (!socket) return;
 
         const handleUpdate = (updatedGame: Game) => {
+            if (updatedGame.gameId !== gameId) return;
+            
             setGame(updatedGame);
             setError('');
         };
