@@ -42,6 +42,7 @@ export interface Game {
     dynamic_ai_status?: string | null;
     chooserTimedOut?: boolean;
     chooserDeadline?: number | null;
+    blockedGuesser?: string | null;
 }
 
 export interface User {

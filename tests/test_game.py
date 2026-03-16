@@ -178,3 +178,66 @@ def test_remove_player_completely():
     assert gm.status == "waiting"
     assert gm.chooser_id is None
 
+def test_consecutive_wrong_guesses_blocked():
+    game = GameManager("BLOCK1")
+    game.add_player("chooser", "Chooser", "sid1")
+    game.add_player("guesser1", "Guesser 1", "sid2")
+    game.add_player("guesser2", "Guesser 2", "sid3")
+    
+    game.word = "TEST"
+    game.status = "playing"
+    game.chooser_id = "chooser"
+    game.players["chooser"]["is_chooser"] = True
+    game.guessed = []
+    
+    # First wrong guess by guesser1
+    game.process_guess("guesser1", "A")
+    assert len(game.guessed) == 1
+    state = game.get_state_for_frontend()
+    assert state.get("blockedGuesser") is None
+
+    # Second wrong guess by guesser1 -> should block them
+    game.process_guess("guesser1", "B")
+    assert len(game.guessed) == 2
+    state = game.get_state_for_frontend()
+    assert state.get("blockedGuesser") == "guesser1"
+    
+    # Third guess by guesser1 (even correct) should be ignored
+    game.process_guess("guesser1", "T")
+    assert len(game.guessed) == 2 # Still 2
+    assert "T" not in game.guessed
+    
+    # Guess by guesser2 unblocks guesser1
+    game.process_guess("guesser2", "C")
+    assert len(game.guessed) == 3
+    state = game.get_state_for_frontend()
+    assert state.get("blockedGuesser") is None
+    
+    # Guesser1 can guess again
+    game.process_guess("guesser1", "T")
+    assert len(game.guessed) == 4
+    assert "T" in game.guessed
+
+def test_consecutive_wrong_guesses_not_blocked_if_alone():
+    game = GameManager("BLOCK2")
+    game.add_player("chooser", "Chooser", "sid1")
+    game.add_player("guesser1", "Guesser Alone", "sid2")
+    
+    game.word = "TEST"
+    game.status = "playing"
+    game.chooser_id = "chooser"
+    game.players["chooser"]["is_chooser"] = True
+    game.guessed = []
+    
+    # Guesser 1 makes two wrong guesses
+    game.process_guess("guesser1", "A")
+    game.process_guess("guesser1", "B")
+    
+    # Because there are no other active guessers, they shouldn't be blocked
+    state = game.get_state_for_frontend()
+    assert state.get("blockedGuesser") is None
+    
+    # They can guess again
+    game.process_guess("guesser1", "T")
+    assert "T" in game.guessed
+

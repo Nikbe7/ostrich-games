@@ -237,11 +237,27 @@ class GameManager:
         if not letter.isalpha() or len(letter) != 1: return
         if letter in self.guessed: return
 
+        # Check for consecutive wrong guesses block
+        # Only apply block if there's someone else who could theoretically guess (active guessers > 1)
+        active_guessers = [p_uuid for p_uuid, p in self.players.items() 
+                           if p.get('online', False) and p_uuid != self.chooser_id]
+        
+        logger.info(f"Checking block rule for {uuid}. Active guessers: {len(active_guessers)}. Guess log length: {len(self.guess_log)}")
+        
+        if len(active_guessers) > 1 and len(self.guess_log) >= 2:
+            last_two_guesses = self.guess_log[-2:]
+            logger.info(f"Last two guesses checking block: {last_two_guesses}")
+            # If the last two guesses were by this player AND both were incorrect, block them
+            if all(g.get('uuid') == uuid and not g.get('correct', True) for g in last_two_guesses):
+                logger.info(f"Player {uuid} blocked from guessing: 2 consecutive wrong guesses.")
+                return
+
         self.guessed.append(letter)
         
         is_correct = letter in self.word
         player_name = self.players[uuid]['name'] if uuid in self.players else "Okänd"
         self.guess_log.append({
+            'uuid': uuid,
             'name': player_name,
             'letter': letter,
             'correct': is_correct
@@ -398,6 +414,19 @@ class GameManager:
             else:
                 sanitized_history.append(cast(Dict[str, Any], h))
 
+        # Determine blocked guesser
+        blocked_guesser_id = None
+        if self.status == 'playing':
+            active_guessers = [p_uuid for p_uuid, p in self.players.items() 
+                           if p.get('online', False) and p_uuid != self.chooser_id]
+            if len(active_guessers) > 1 and len(self.guess_log) >= 2:
+                last_two = self.guess_log[-2:]
+                first_uuid = last_two[0].get('uuid')
+                second_uuid = last_two[1].get('uuid')
+                if first_uuid and first_uuid == second_uuid:
+                    if not last_two[0].get('correct', True) and not last_two[1].get('correct', True):
+                        blocked_guesser_id = first_uuid
+
         return {
             'gameId': self.game_id,
             'word': display_word,
@@ -413,6 +442,7 @@ class GameManager:
             'dynamic_ai_status': self.dynamic_ai_status,
             'chooserTimedOut': self.chooser_timed_out,
             'chooserDeadline': (self.choosing_started_at + self.CHOOSER_TIMEOUT_SECONDS) if self.choosing_started_at else None,
+            'blockedGuesser': blocked_guesser_id,
         }
 
 

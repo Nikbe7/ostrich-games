@@ -340,13 +340,20 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
                             </div>
 
                             {/* Row 4: Keyboard */}
-                            <div className={`flex items-start justify-center ${hideKeyboard || viewingHistory ? 'invisible' : ''}`}>
-                                <Keyboard
-                                    guessedLetters={displayGame.guessedLetters || []}
-                                    onGuess={guessLetter}
-                                    disabled={displayGame.status !== 'playing' || hideKeyboard || !!viewingHistory}
-                                    word={displayGame.word || ''}
-                                />
+                            <div className={`flex items-start justify-center w-full ${hideKeyboard || viewingHistory ? 'invisible' : ''}`}>
+                                <div className="flex flex-col items-center gap-2 w-full">
+                                    <Keyboard
+                                        guessedLetters={displayGame.guessedLetters || []}
+                                        onGuess={guessLetter}
+                                        disabled={displayGame.status !== 'playing' || hideKeyboard || !!viewingHistory || displayGame.blockedGuesser === sessionId}
+                                        word={displayGame.word || ''}
+                                    />
+                                    {displayGame.status === 'playing' && displayGame.blockedGuesser === sessionId && (
+                                        <div className="text-red-400 text-sm font-bold bg-black/40 px-3 py-1 rounded-full border border-red-500/30">
+                                            Vänta på att någon annan gissar! (2 fel i rad)
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
