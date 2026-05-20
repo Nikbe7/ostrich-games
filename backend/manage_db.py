@@ -2,11 +2,11 @@ import os
 import sys
 from typing import List, Dict, Any
 
-# Ensure backend directory is in the Python path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Ensure root directory is in the Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from core.supabase import supabase
-from services.auth_service import AuthManager
+from backend.core.supabase import supabase
+from backend.services.auth_service import AuthManager
 
 def get_all_users() -> List[Dict[str, Any]]:
     """Fetch all users from the database."""
