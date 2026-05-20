@@ -6,6 +6,7 @@ from typing import List, Dict, Any
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from core.supabase import supabase
+from services.auth_service import AuthManager
 
 def get_all_users() -> List[Dict[str, Any]]:
     """Fetch all users from the database."""
@@ -102,13 +103,14 @@ def print_menu():
     print("3. Reset a user's games")
     print("4. Clear all active games (app_games)")
     print("5. Reset ALL database data (Users, Sessions, Games, Words)")
-    print("6. Exit")
+    print("6. Generate password reset link for a user")
+    print("7. Exit")
     print("----------------------------------\n")
 
 def main():
     while True:
         print_menu()
-        choice = input("Select an option (1-6): ").strip()
+        choice = input("Select an option (1-7): ").strip()
         
         if choice == '1':
             users = get_all_users()
@@ -152,11 +154,20 @@ def main():
                 print("Operation cancelled or confirmation failed.")
                 
         elif choice == '6':
+            username = input("Enter username to generate reset link for: ").strip()
+            token = AuthManager.generate_password_reset_token(username)
+            if token:
+                print(f"\\nSUCCESS! Send this link to the user:")
+                print(f"https://www.ostrich-hangman.se/reset-password?token={token}\\n")
+            else:
+                print(f"Error: User '{username}' not found or database error.")
+
+        elif choice == '7':
             print("Exiting...")
             break
             
         else:
-            print("Invalid option. Please choose 1-6.")
+            print("Invalid option. Please choose 1-7.")
 
 if __name__ == "__main__":
     main()

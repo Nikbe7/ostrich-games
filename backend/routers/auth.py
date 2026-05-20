@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from ..schemas import AuthRequest
+from ..schemas import AuthRequest, ResetPasswordRequest
 from ..services.auth_service import AuthManager
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -16,4 +16,11 @@ async def login(request: AuthRequest):
     result = AuthManager.login(request.username, request.password)
     if not result["success"]:
         raise HTTPException(status_code=401, detail=result["error"])
+    return result
+
+@router.post("/reset-password")
+async def reset_password(request: ResetPasswordRequest):
+    result = AuthManager.reset_password(request.token, request.new_password)
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result["error"])
     return result

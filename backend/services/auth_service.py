@@ -41,7 +41,12 @@ class AuthManager:
     @staticmethod
     def register(username: str, password: str) -> Dict[str, Any]:
         # Check if username exists (case insensitive)
-        existing = supabase.table('app_users').select('id').ilike('username', username.strip()).execute()
+        try:
+            existing = supabase.table('app_users').select('id').ilike('username', username.strip()).execute()
+        except Exception as e:
+            logger.error(f"Supabase register existing-check error: {e}")
+            return {"success": False, "error": f"Databasfel vid kontroll av användarnamn. {str(e)}"}
+
         if existing.data and len(existing.data) > 0:
             return {"success": False, "error": "Användarnamnet är upptaget."}
 
@@ -68,7 +73,12 @@ class AuthManager:
 
     @staticmethod
     def login(username: str, password: str) -> Dict[str, Any]:
-        result = supabase.table('app_users').select('*').ilike('username', username.strip()).execute()
+        try:
+            result = supabase.table('app_users').select('*').ilike('username', username.strip()).execute()
+        except Exception as e:
+            logger.error(f"Supabase login error: {e}")
+            return {"success": False, "error": f"Databasfel vid inloggning. {str(e)}"}
+
         if not result.data or len(result.data) == 0:
             return {"success": False, "error": "Användarnamnet finns inte."}
             
@@ -110,6 +120,51 @@ class AuthManager:
                 "refresh_token": token # Simple reuse for now
             }
         }
+
+    @staticmethod
+    def generate_password_reset_token(username: str) -> Optional[str]:
+        try:
+            result = supabase.table('app_users').select('id').ilike('username', username.strip()).execute()
+            if not result.data or len(result.data) == 0:
+                return None
+            user_id = result.data[0]['id']
+            token = "RESET_" + secrets.token_urlsafe(32)
+            session_data = {
+                "token": token,
+                "user_id": user_id
+            }
+            supabase.table('app_sessions').insert(session_data).execute()
+            return token
+        except Exception as e:
+            logger.error("Error generating reset token: %s", e)
+            return None
+
+    @staticmethod
+    def reset_password(token: str, new_password: str) -> Dict[str, Any]:
+        if not token.startswith("RESET_"):
+            return {"success": False, "error": "Ogiltig länk för återställning av lösenord."}
+            
+        try:
+            # 1. Look up the token in app_sessions
+            result = supabase.table('app_sessions').select('user_id').eq('token', token).execute()
+            if not result.data or len(result.data) == 0:
+                return {"success": False, "error": "Ogiltig eller utgången länk för återställning."}
+                
+            user_id = result.data[0]['user_id']
+            
+            # 2. Hash the new password
+            password_hash = AuthManager._hash_password(new_password)
+            
+            # 3. Update the user
+            supabase.table('app_users').update({'password_hash': password_hash}).eq('id', user_id).execute()
+            
+            # 4. Delete all sessions for this user (including the reset token) to force re-login everywhere
+            supabase.table('app_sessions').delete().eq('user_id', user_id).execute()
+            
+            return {"success": True}
+        except Exception as e:
+            logger.error("Error resetting password: %s", e)
+            return {"success": False, "error": "Ett fel uppstod vid återställning av lösenordet."}
 
     @staticmethod
     def get_user_by_token(token: str) -> Optional[Dict[str, Any]]:

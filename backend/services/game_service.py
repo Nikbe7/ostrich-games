@@ -41,6 +41,39 @@ def _load_words():
 
 _load_words()
 
+def add_valid_word(word: str) -> bool:
+    global _valid_words_list, _valid_words_set
+    word_upper = word.upper().strip()
+    if word_upper in _valid_words_set:
+        return False
+    _valid_words_set.add(word_upper)
+    _valid_words_list.append(word_upper)
+    try:
+        supabase.table('app_words').insert({'word': word_upper}).execute()
+        return True
+    except Exception as e:
+        logger.error("Failed to add word to DB: %s", e)
+        return False
+
+def remove_valid_word(word: str) -> bool:
+    global _valid_words_list, _valid_words_set
+    word_upper = word.upper().strip()
+    if word_upper not in _valid_words_set:
+        return False
+    _valid_words_set.remove(word_upper)
+    _valid_words_list.remove(word_upper)
+    try:
+        supabase.table('app_words').delete().eq('word', word_upper).execute()
+        return True
+    except Exception as e:
+        logger.error("Failed to remove word from DB: %s", e)
+        return False
+
+def get_all_valid_words() -> List[str]:
+    global _valid_words_list
+    return sorted(_valid_words_list)
+
+
 
 class GameManager:
     """Manages a single game room."""
@@ -557,6 +590,18 @@ class GameLobby:
         """Count how many active games in the lobby have the given user as a player."""
         return len(self.user_games.get(user_id, set()))
 
+    def get_system_stats(self) -> Dict[str, Any]:
+        """Returns live system statistics."""
+        total_games = len(self.games)
+        online_players = 0
+        for game in self.games.values():
+            for p in game.players.values():
+                if p.get('online', False):
+                    online_players += 1
+        return {
+            "active_games_in_memory": total_games,
+            "online_players": online_players
+        }
 
 # Maximum number of active games an authenticated user can be the creator of
 MAX_GAMES_PER_USER = 10

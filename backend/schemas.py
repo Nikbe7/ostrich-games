@@ -20,6 +20,14 @@ class AuthRequest(BaseModel):
     username: str
     password: str
 
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str
+
+class AdminLoginRequest(BaseModel):
+    password: str
+
+
 # Response Models (mostly for documentation/structure, though we usually emit dicts)
 class PlayerState(BaseModel):
     id: str

@@ -36,6 +36,23 @@ export const loginUser = async (username: string, password: string): Promise<Aut
     }
 };
 
+export const resetPassword = async (token: string, new_password: string): Promise<AuthResponse> => {
+    try {
+        const response = await fetch(`${API_URL}/api/auth/reset-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token, new_password }),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            return { success: false, error: data.detail || 'Något gick fel.' };
+        }
+        return data;
+    } catch (error) {
+        return { success: false, error: 'Kunde inte ansluta till servern.' };
+    }
+};
+
 export const fetchUserGames = async (token: string): Promise<GameMetadata[]> => {
     try {
         const response = await fetch(`${API_URL}/api/user/games`, {

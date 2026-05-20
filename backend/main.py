@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from .services.game_service import game_lobby, MAX_GAMES_PER_USER
 from .services.auth_service import AuthManager
-from .routers import auth, user
+from .routers import auth, user, admin
 import os
 
 # Configure Logging
@@ -79,6 +79,7 @@ async def root():
 # --- REST API Routers ---
 app.include_router(auth.router)
 app.include_router(user.router)
+app.include_router(admin.router)
 
 # --- Socket.IO Events ---
 
