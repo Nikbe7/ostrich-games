@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, GameMetadata } from '@/types/game';
 import { useToast } from '@/components/Toast';
+import { getGameHistory, removeGameFromHistory } from '@/utils/session';
 
 interface DashboardContentProps {
     gameHistory: GameMetadata[];
@@ -23,11 +24,30 @@ export default function DashboardContent({
     onRemoveGame
 }: DashboardContentProps) {
     const [gameIdInput, setGameIdInput] = useState('');
+    const [localGames, setLocalGames] = useState<GameMetadata[]>([]);
     const { showToast } = useToast();
+
+    useEffect(() => {
+        const ids = getGameHistory();
+        setLocalGames(ids.map(id => ({ id, last_activity: Date.now() / 1000 })));
+    }, []);
 
     const handleJoinSubmit = () => {
         if (!gameIdInput) return showToast('Vänligen ange ett Spel-ID', 'error');
         onJoinGame(gameIdInput.toUpperCase());
+    };
+
+    const allGames = [...gameHistory];
+    localGames.forEach(lg => {
+        if (!allGames.find(g => g.id === lg.id)) {
+            allGames.push(lg);
+        }
+    });
+
+    const handleRemove = (id: string) => {
+        removeGameFromHistory(id);
+        setLocalGames(prev => prev.filter(g => g.id !== id));
+        onRemoveGame(id);
     };
 
     return (
@@ -87,7 +107,7 @@ export default function DashboardContent({
             </motion.div>
 
             {/* Game History */}
-            {gameHistory.length > 0 && (
+            {allGames.length > 0 && (
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -98,7 +118,7 @@ export default function DashboardContent({
                     <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-300">Dina Aktiva Spel</h2>
                     <ul className="space-y-3">
                         <AnimatePresence>
-                            {gameHistory.map((game) => {
+                            {allGames.map((game) => {
                                 const daysInactive = (Date.now() / 1000 - game.last_activity) / (24 * 3600);
                                 const isArchived = daysInactive >= 1;
 
@@ -129,7 +149,7 @@ export default function DashboardContent({
                                                 Spela
                                             </motion.button>
                                             <button
-                                                onClick={() => onRemoveGame(game.id)}
+                                                onClick={() => handleRemove(game.id)}
                                                 className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
                                                 title="Ta bort från lista"
                                             >

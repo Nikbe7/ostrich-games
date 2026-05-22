@@ -28,6 +28,8 @@ export default defineConfig({
                 'next.config.*',
                 '.next/**',
                 'node_modules/**',
+                'utils/**',
+                'hooks/**',
             ],
         },
     },
