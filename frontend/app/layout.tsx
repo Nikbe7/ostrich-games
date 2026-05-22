@@ -8,8 +8,8 @@ import { SoundProvider } from '@/hooks/useSound'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-    title: 'Ostrich Hangman',
-    description: 'Team Ostrich Hänga Gubbe',
+    title: 'Ostrich Games',
+    description: 'Team Ostrich Games',
 }
 
 export default function RootLayout({

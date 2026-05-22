@@ -1,7 +1,8 @@
 services:
   - type: web
-    name: ostrich-hangman-backend
+    name: ostrich-games-backend
     runtime: python
+    region: frankfurt
     plan: free
     buildCommand: pip install -r backend/requirements.txt
     startCommand: uvicorn backend.main:socket_app --host 0.0.0.0 --port $PORT
@@ -11,4 +12,8 @@ services:
       - key: SUPABASE_KEY
         sync: false
       - key: FRONTEND_URL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: GEMINI_API_KEY
         sync: false

@@ -6,9 +6,8 @@ import { User, GameMetadata } from '@/types/game';
 import { useToast } from '@/components/Toast';
 
 interface DashboardContentProps {
-    user: User;
     gameHistory: GameMetadata[];
-    onLogout: () => void;
+    onClose: () => void;
     onCreateGame: () => void;
     onJoinGame: (gameId: string) => void;
     onRejoinGame: (gameId: string) => void;
@@ -16,9 +15,8 @@ interface DashboardContentProps {
 }
 
 export default function DashboardContent({
-    user,
     gameHistory,
-    onLogout,
+    onClose,
     onCreateGame,
     onJoinGame,
     onRejoinGame,
@@ -42,15 +40,16 @@ export default function DashboardContent({
                 className="bg-brand-card/80 p-5 sm:p-8 rounded-2xl backdrop-blur-xl border border-white/5 shadow-2xl space-y-6 sm:space-y-8"
             >
                 <div className="flex justify-between items-center pb-6 border-b border-brand-primary/20">
-                    <div>
-                        <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Inloggad som</p>
-                        <p className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-primaryHover to-white">{user.username}</p>
+                    <div className="flex items-center gap-3">
+                        <img src="/hangman-icon.png" alt="Hänga Gubbe" className="w-10 h-10 object-contain drop-shadow-lg" />
+                        <h2 className="text-2xl font-bold text-white">Hänga Gubbe</h2>
                     </div>
                     <button
-                        onClick={onLogout}
-                        className="text-sm text-gray-400 hover:text-brand-primary transition-colors font-medium border border-transparent hover:border-brand-primary/30 px-3 py-1.5 rounded-lg"
+                        onClick={onClose}
+                        className="text-gray-400 hover:text-red-400 transition-colors p-2 rounded-lg hover:bg-white/5"
+                        title="Stäng"
                     >
-                        Logga ut
+                        ✕
                     </button>
                 </div>
 

@@ -23,16 +23,10 @@ export default function StatusOverlay({
     onCancelStart,
     onForceReset,
 }: StatusOverlayProps) {
-    if (!game) return null;
-
-    const isMyTurnToChoose = game.wordChooser === sessionId && game.status === 'choosing';
-    const chooserName = game.players.find((p: any) => p.sessionId === game.wordChooser)?.name || 'Någon';
-    const isChooser = game.players.find((p: any) => p.sessionId === sessionId)?.sessionId === game.wordChooser;
-
     // Live countdown for the choosing phase
     const [secsLeft, setSecsLeft] = useState<number | null>(null);
     useEffect(() => {
-        if (game.status !== 'choosing' || !game.chooserDeadline) {
+        if (!game || game.status !== 'choosing' || !game.chooserDeadline) {
             setSecsLeft(null);
             return;
         }
@@ -43,7 +37,13 @@ export default function StatusOverlay({
         update();
         const id = setInterval(update, 1000);
         return () => clearInterval(id);
-    }, [game.status, game.chooserDeadline]);
+    }, [game?.status, game?.chooserDeadline]);
+
+    if (!game) return null;
+
+    const isMyTurnToChoose = game.wordChooser === sessionId && game.status === 'choosing';
+    const chooserName = game.players.find((p: any) => p.sessionId === game.wordChooser)?.name || 'Någon';
+    const isChooser = game.players.find((p: any) => p.sessionId === sessionId)?.sessionId === game.wordChooser;
 
     const mins = secsLeft != null ? Math.floor(secsLeft / 60) : null;
     const secs = secsLeft != null ? String(secsLeft % 60).padStart(2, '0') : null;

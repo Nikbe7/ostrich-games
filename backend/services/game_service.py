@@ -88,7 +88,7 @@ class GameManager:
         self.chooser_id: Optional[str] = None
         self.history: List[Union[Dict[str, Any], str]] = []
         self.status = "waiting"
-        self.message = "Välkommen till Ostrich Hangman!"
+        self.message = "Välkommen till Ostrich Games!"
         self.winner_id: Optional[str] = None
         self.guess_log: List[Dict[str, Any]] = []
         self.dynamic_ai_status: Optional[str] = None

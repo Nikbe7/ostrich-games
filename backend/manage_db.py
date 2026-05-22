@@ -97,7 +97,7 @@ def clear_all_games_db() -> bool:
         return False
 
 def print_menu():
-    print("\n--- Ostrich Hangman DB Manager ---")
+    print("\n--- Ostrich Games DB Manager ---")
     print("1. List all users")
     print("2. Delete a user")
     print("3. Reset a user's games")
@@ -157,8 +157,8 @@ def main():
             username = input("Enter username to generate reset link for: ").strip()
             token = AuthManager.generate_password_reset_token(username)
             if token:
-                print(f"\\nSUCCESS! Send this link to the user:")
-                print(f"https://www.ostrich-hangman.se/reset-password?token={token}\\n")
+                print(f"\nSUCCESS! Send this link to the user:")
+                print(f"https://www.ostrich-games.se/reset-password?token={token}\n")
             else:
                 print(f"Error: User '{username}' not found or database error.")
 

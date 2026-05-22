@@ -1,11 +1,12 @@
-# Ostrich Hangman 🦩
+# Ostrich Games 🦩
 
-A modern real-time multiplayer implementation of the classic Hangman game, built with a Next.js frontend, a FastAPI & Socket.IO backend, Supabase for data persistence, and Google Gemini AI for dynamic word validation.
+A modern real-time multiplayer game portal. Currently featuring the classic Hangman game, with more multiplayer games (like Draw & Guess) on the way. Built with a Next.js frontend, a FastAPI & Socket.IO backend, Supabase for data persistence, and Google Gemini AI for dynamic word validation.
 
 ## 🌟 Features
 
+- **Game Portal Architecture**: A centralized lobby to discover, launch, and track multiple real-time games.
 - **Real-Time Multiplayer**: Play together instantly using WebSockets via `socket.io-client`.
-- **Dynamic AI Validation**: Words are validated through a Google Gemini Flash API pipeline to ensure they are real (and family-friendly) words before being committed to the database.
+- **Dynamic AI Validation**: Game content (like words in Hangman) is validated through a Google Gemini Flash API pipeline to ensure quality and safety.
 - **Smart Game Persistence**: Sessions and user accounts are managed via Supabase. Games are persisted to the database, allowing for cross-device history and recovery.
 - **Cloud-Sync Indicators**: Visual indicators (☁️) appear in the dashboard for games that have been archived to the database after 24 hours of inactivity.
 - **Auto-Cleanup**: Background tasks automatically prune inactive games from server RAM after 24 hours to maintain peak performance, while keeping the state safe in Supabase.
@@ -48,8 +49,8 @@ The project is split into two main directories:
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/Nikbe7/ostrich-hangman.git
-cd ostrich-hangman
+git clone https://github.com/Nikbe7/ostrich-games.git
+cd ostrich-games
 ```
 
 ### 2. Install Git Hooks

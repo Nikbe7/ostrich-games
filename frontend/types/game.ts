@@ -1,5 +1,5 @@
 /**
- * Shared Type Definitions for Ostrich Hangman
+ * Shared Type Definitions for Ostrich Games
  * These should align with backend/schemas.py and backend/services/game_service.py
  */
 

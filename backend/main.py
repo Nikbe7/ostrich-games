@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI):
     # Shutdown
     task.cancel()
 
-app = FastAPI(title="Ostrich Hangman API", lifespan=lifespan)
+app = FastAPI(title="Ostrich Games API", lifespan=lifespan)
 
 # Mount Socket.IO app
 socket_app = socketio.ASGIApp(sio, app)
@@ -41,9 +41,9 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         "http://localhost:8000",
         "http://127.0.0.1:8000",
-        "https://ostrich-hangman.vercel.app",
-        "https://ostrich-hangman.se",
-        "https://www.ostrich-hangman.se",
+        "https://ostrich-games.vercel.app",
+        "https://ostrich-games.se",
+        "https://www.ostrich-games.se",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -74,7 +74,7 @@ async def cleanup_task():
 # --- Base Route for Health Checks ---
 @app.api_route("/", methods=["GET", "HEAD"])
 async def root():
-    return {"status": "ok", "message": "Ostrich Hangman API is running"}
+    return {"status": "ok", "message": "Ostrich Games API is running"}
 
 # --- REST API Routers ---
 app.include_router(auth.router)

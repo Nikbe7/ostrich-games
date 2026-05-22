@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import AuthForm from '@/components/AuthForm';
 import OstrichAnimation from '@/components/OstrichAnimation';
 import Hero from '@/components/Hero';
-import DashboardContent from '@/components/DashboardContent';
+import PortalLobby from '@/components/PortalLobby';
 import SoundToggle from '@/components/SoundToggle';
 import { useSound } from '@/hooks/useSound';
 
@@ -34,7 +34,7 @@ export default function Home() {
             const lastGameId = getLastGameId();
             if (lastGameId) {
                 // Use replace instead of push to avoid history warnings and maintain a clean back-button experience
-                router.replace(`/game/${lastGameId}`);
+                router.replace(`/hangman/${lastGameId}`);
                 return;
             }
             setReady(true);
@@ -65,7 +65,7 @@ export default function Home() {
 
     const handleCreateGame = () => {
         const newGameId = Math.random().toString(36).substring(2, 8).toUpperCase();
-        router.push(`/game/${newGameId}`);
+        router.push(`/hangman/${newGameId}`);
     };
 
     if (!ready || isLoading) {
@@ -128,13 +128,13 @@ export default function Home() {
                             <AuthForm onLogin={handleLoginSuccess} />
                         </motion.div>
                     ) : (
-                        <DashboardContent
+                        <PortalLobby
                             user={user}
-                            gameHistory={gameHistory}
                             onLogout={logout}
+                            gameHistory={gameHistory}
                             onCreateGame={handleCreateGame}
-                            onJoinGame={(id) => router.push(`/game/${id}`)}
-                            onRejoinGame={(id) => router.push(`/game/${id}`)}
+                            onJoinGame={(id) => router.push(`/hangman/${id}`)}
+                            onRejoinGame={(id) => router.push(`/hangman/${id}`)}
                             onRemoveGame={removeGame}
                         />
                     )}

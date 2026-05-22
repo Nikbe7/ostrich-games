@@ -28,7 +28,7 @@ export default function Hero() {
                     transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
                 />
                 <div className="p-1 rounded-full bg-brand-primary/10 border border-brand-primary/30 shadow-[0_0_40px_rgba(5,150,105,0.3)] overflow-hidden w-24 h-24 relative">
-                    <img src="/ostrich.png" alt="Ostrich Hangman" className="object-cover w-full h-full rounded-full bg-black" />
+                    <img src="/ostrich.png" alt="Ostrich Games" className="object-cover w-full h-full rounded-full bg-black" />
                 </div>
             </motion.div>
 
@@ -61,7 +61,7 @@ export default function Hero() {
                     transition={{ delay: 0.9, duration: 0.7, type: "spring", stiffness: 120 }}
                     className="inline-block bg-gradient-to-r from-brand-primary via-emerald-300 to-teal-400 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(5,150,105,0.5)] text-4xl sm:text-6xl pb-2"
                 >
-                    Hänga Gubbe
+                    Games
                 </motion.span>
             </h1>
         </motion.div>
