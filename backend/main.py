@@ -44,8 +44,6 @@ app.add_middleware(
         "https://ostrich-games.vercel.app",
         "https://ostrich-games.se",
         "https://www.ostrich-games.se",
-        "https://ostrich-hangman.se",
-        "https://www.ostrich-hangman.se",
     ],
     allow_credentials=True,
     allow_methods=["*"],
