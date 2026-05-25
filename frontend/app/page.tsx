@@ -88,7 +88,7 @@ export default function Home() {
                     animate={{ opacity: 1 }}
                     className="text-gray-400 font-medium tracking-widest text-xs uppercase animate-pulse"
                 >
-                    Laddar Ostrich Hangman...
+                    Laddar Ostrich Games...
                 </motion.p>
             </div>
         );
