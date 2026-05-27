@@ -23,12 +23,13 @@ describe('DashboardContent', () => {
     it('renders header and buttons correctly', () => {
         render(
             <DashboardContent 
+                gameType="hangman"
                 gameHistory={[]}
-                onClose={vi.fn()}
-                onCreateGame={vi.fn()}
-                onJoinGame={vi.fn()}
-                onRejoinGame={vi.fn()}
-                onRemoveGame={vi.fn()}
+                onClose={() => {}}
+                onCreateGame={() => {}}
+                onJoinGame={() => {}}
+                onRejoinGame={() => {}}
+                onRemoveGame={() => {}}
             />
         );
 
@@ -45,12 +46,13 @@ describe('DashboardContent', () => {
 
         render(
             <DashboardContent 
+                gameType="hangman"
                 gameHistory={mockHistory}
-                onClose={vi.fn()}
-                onCreateGame={vi.fn()}
-                onJoinGame={vi.fn()}
-                onRejoinGame={vi.fn()}
-                onRemoveGame={vi.fn()}
+                onClose={() => {}}
+                onCreateGame={() => {}}
+                onJoinGame={() => {}}
+                onRejoinGame={() => {}}
+                onRemoveGame={() => {}}
             />
         );
 

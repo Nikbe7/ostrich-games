@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from ..schemas import AdminLoginRequest
 from ..services.auth_service import AuthManager
 from ..services.game_service import game_lobby, get_all_valid_words, add_valid_word, remove_valid_word
+from ..services.draw_service import draw_game_lobby
 from ..core.supabase import supabase
 import os
 import secrets
@@ -105,7 +106,18 @@ async def remove_word(word: str, _=Depends(verify_admin)):
 
 @router.get("/system")
 async def system_status(_=Depends(verify_admin)):
-    return {"success": True, "stats": game_lobby.get_system_stats()}
+    hangman_stats = game_lobby.get_system_stats()
+    
+    # Calculate Draw & Guess stats manually since it doesn't have a get_system_stats method
+    draw_active = len(draw_game_lobby.games)
+    draw_online = sum(1 for game in draw_game_lobby.games.values() for p in game.players.values() if p.get('online'))
+    
+    combined_stats = {
+        "active_games_in_memory": hangman_stats.get("active_games_in_memory", 0) + draw_active,
+        "online_players": hangman_stats.get("online_players", 0) + draw_online
+    }
+    
+    return {"success": True, "stats": combined_stats}
 
 # --- Advanced User Management ---
 
@@ -159,11 +171,23 @@ async def user_stats(username: str, _=Depends(verify_admin)):
             winner = state.get("winnerId")
             
             if status == "finished":
-                if winner == user_id:
-                    wins += 1
-                else:
-                    losses += 1
-                    
+                if winner is not None:
+                    # Hangman logic
+                    if winner == user_id:
+                        wins += 1
+                    else:
+                        losses += 1
+                elif "correctGuessers" in state:
+                    # Draw & Guess logic
+                    correct = state.get("correctGuessers", [])
+                    chooser = state.get("wordChooser")
+                    if user_id in correct:
+                        wins += 1
+                    elif user_id == chooser and len(correct) > 0:
+                        wins += 1
+                    else:
+                        losses += 1
+                        
         return {
             "success": True, 
             "stats": {

@@ -7,6 +7,7 @@ import { useSound } from '@/hooks/useSound';
 export function useGameSocket(gameId: string, sessionId: string, name: string) {
     const { socket, isConnected } = useSocket();
     const [game, setGame] = useState<Game | null>(null);
+    const [trueId, setTrueId] = useState<string | null>(null);
     const [error, setError] = useState('');
     const [notification, setNotification] = useState('');
     const [showConfetti, setShowConfetti] = useState(false);
@@ -93,7 +94,9 @@ export function useGameSocket(gameId: string, sessionId: string, name: string) {
         if (!socket || !isConnected || !gameId || !sessionId || !name) return;
 
         socket.emit('join_game', { gameId, sessionId, playerName: name }, (response: any) => {
-            if (response?.status === 'error') {
+            if (response?.status === 'ok' && response?.uuid) {
+                setTrueId(response.uuid);
+            } else if (response?.status === 'error') {
                 setError(`Join failed: ${response.message}`);
             }
         });
@@ -122,6 +125,7 @@ export function useGameSocket(gameId: string, sessionId: string, name: string) {
 
     return {
         game,
+        trueId,
         isConnected,
         error,
         notification,

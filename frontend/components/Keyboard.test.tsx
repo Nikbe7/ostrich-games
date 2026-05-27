@@ -20,6 +20,6 @@ test('Keyboard renders correctly and responds to clicks', () => {
     expect(cButton).not.toBeDisabled();
 
     // Test click returns lowercase 'c'
-    fireEvent.click(cButton);
+    fireEvent.click(cButton!);
     expect(mockOnGuess).toHaveBeenCalledWith('c');
 });

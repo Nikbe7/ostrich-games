@@ -63,9 +63,26 @@ export default function Home() {
         });
     };
 
-    const handleCreateGame = () => {
-        const newGameId = Math.random().toString(36).substring(2, 8).toUpperCase();
-        router.push(`/hangman/${newGameId}`);
+    const handleCreateGame = (gameType: 'hangman' | 'draw') => {
+        let newGameId = Math.random().toString(36).substring(2, 8).toUpperCase();
+        if (gameType === 'draw') {
+            newGameId = 'DRAW_' + newGameId;
+        }
+        router.push(`/${gameType}/${newGameId}`);
+    };
+
+    const handleJoinGame = (gameType: 'hangman' | 'draw', id: string) => {
+        // Ensure DRAW_ prefix if it's a draw game and missing
+        let finalId = id.toUpperCase();
+        if (gameType === 'draw' && !finalId.startsWith('DRAW_')) {
+            finalId = 'DRAW_' + finalId;
+        }
+        router.push(`/${gameType}/${finalId}`);
+    };
+
+    const handleRejoinGame = (id: string) => {
+        const gameType = id.toUpperCase().startsWith('DRAW_') ? 'draw' : 'hangman';
+        router.push(`/${gameType}/${id}`);
     };
 
     if (!ready || isLoading) {
@@ -133,8 +150,8 @@ export default function Home() {
                             onLogout={logout}
                             gameHistory={gameHistory}
                             onCreateGame={handleCreateGame}
-                            onJoinGame={(id) => router.push(`/hangman/${id}`)}
-                            onRejoinGame={(id) => router.push(`/hangman/${id}`)}
+                            onJoinGame={handleJoinGame}
+                            onRejoinGame={handleRejoinGame}
                             onRemoveGame={removeGame}
                         />
                     )}

@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import PlayerList from '@/components/PlayerList';
 import GameHistory from '@/components/GameHistory';
+import DrawRulesModal from '@/components/draw/DrawRulesModal';
 import { Game } from '@/types/game';
 
 interface MobileSidebarProps {
@@ -20,6 +21,8 @@ export default function MobileSidebar({
     sessionId,
     onLeave
 }: MobileSidebarProps) {
+    const isDrawGame = gameId.toUpperCase().startsWith('DRAW_');
+    
     return (
         <AnimatePresence>
             {isOpen && (
@@ -69,16 +72,20 @@ export default function MobileSidebar({
                                 )}
                             </>
                         )}
-                        <div className="text-xs text-gray-500 text-center mt-2 flex items-center justify-center gap-2">
+                        <div className="text-xs text-gray-500 text-center mt-2 flex items-center justify-center gap-2 mb-auto">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m11 17-5-5 5-5" /><path d="m18 17-5-5 5-5" /></svg>
                             Svep vänster för att stänga
                         </div>
-                        <button
-                            onClick={onLeave}
-                            className="w-full flex items-center justify-center gap-2 text-gray-300 text-sm border border-white/10 hover:bg-white/5 p-2.5 rounded transition-colors mt-auto"
-                        >
-                            ← Tillbaka
-                        </button>
+                        
+                        <div className="mt-4">
+                            {isDrawGame && <DrawRulesModal />}
+                            <button
+                                onClick={onLeave}
+                                className="w-full flex items-center justify-center gap-2 text-gray-300 text-sm border border-white/10 hover:bg-white/5 p-2.5 rounded transition-colors"
+                            >
+                                ← Tillbaka
+                            </button>
+                        </div>
                     </motion.div>
                 </motion.div>
             )}

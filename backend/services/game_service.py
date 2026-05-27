@@ -356,7 +356,7 @@ class GameManager:
         Returns (success: bool, message: str)
         """
         self._update_activity()
-        from ..ai_validator import validate_word_with_ai
+        from ..ai_validator import validate_word_with_ai, is_valid_word_format
         
         if self.status != 'choosing':
             return False, "Spelet väntar inte på ett ordval just nu."
@@ -366,13 +366,9 @@ class GameManager:
             
         word_upper = word.upper().strip()
         
-        # 1. Validation 1: Letters only
-        if not word_upper.isalpha():
-             return False, "Ordet får bara innehålla bokstäver."
-             
-        # 2. Validation 2: Word length
-        if len(word_upper) < 2:
-            return False, "Ordet är för kort."
+        format_valid, format_msg = is_valid_word_format(word)
+        if not format_valid:
+            return False, format_msg
             
         # 3. Validation 3: Dictionary & AI Fallback
         is_valid = False

@@ -80,16 +80,6 @@ export default function StatusOverlay({
                             {error}
                         </motion.div>
                     )}
-                    {notification && (
-                        <motion.div
-                            initial={{ opacity: 0, x: 20, scale: 0.9 }}
-                            animate={{ opacity: 1, x: 0, scale: 1 }}
-                            exit={{ opacity: 0, x: 20, scale: 0.9 }}
-                            className="bg-blue-500/90 text-white p-3 rounded shadow-lg pointer-events-auto"
-                        >
-                            {notification}
-                        </motion.div>
-                    )}
                 </AnimatePresence>
             </div>
 
@@ -126,7 +116,7 @@ export default function StatusOverlay({
                         </div>
                     </div>
                 )}
-                {game.status === 'choosing' && (
+                {game.status === 'choosing' && !game.gameId?.toLowerCase().startsWith('draw_') && (
                     <div className="status-slide-in">
                         {isMyTurnToChoose ? (
                             <div className="flex flex-col items-center gap-2">
@@ -205,7 +195,29 @@ export default function StatusOverlay({
                 )}
                 {game.status === 'finished' && (
                     <div className="status-slide-in max-w-md mx-auto">
-                        {game.winnerId ? (
+                        {game.gameId?.toLowerCase().startsWith('draw_') ? (
+                            <div className="status-shimmer backdrop-blur-2xl px-5 py-4 rounded-2xl border space-y-3 text-sm shadow-2xl bg-black/80 bg-gradient-to-br from-black/60 via-brand-primary/20 to-black/60 border-brand-primary/50 text-white shadow-brand-primary/20 text-center">
+                                <h2 className="text-xl font-bold flex items-center justify-center gap-2 drop-shadow-md">
+                                    <span>🎨</span> Rundan är slut!
+                                </h2>
+                                <p className="text-gray-200">Ordet var: <span className="font-bold text-brand-primary text-lg ml-1">{game.word}</span></p>
+                                
+                                {(game as any).correctGuessers && (game as any).correctGuessers.length > 0 && (
+                                    <div className="text-xs text-brand-primary/80 mb-2">
+                                        {(game as any).correctGuessers.length} {(game as any).correctGuessers.length === 1 ? 'person' : 'personer'} gissade rätt!
+                                    </div>
+                                )}
+
+                                <div className="relative group mx-auto w-max mt-2">
+                                    <button
+                                        onClick={onNewGame}
+                                        className="bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-2.5 px-8 rounded-xl transition-all transform active:scale-95 shadow-lg shadow-brand-primary/30 w-full"
+                                    >
+                                        🔄 Starta ny runda
+                                    </button>
+                                </div>
+                            </div>
+                        ) : game.winnerId ? (
                             <div className={`status-shimmer backdrop-blur-xl px-5 py-3 rounded-2xl border space-y-2 text-sm shadow-lg ${game.winnerId === sessionId ? 'bg-gradient-to-r from-amber-500/15 via-yellow-400/20 to-amber-500/15 border-amber-400/40 text-amber-200 shadow-amber-500/10' : 'bg-gradient-to-r from-yellow-600/10 via-yellow-500/15 to-yellow-600/10 border-yellow-500/30 text-yellow-200 shadow-yellow-500/5'}`}>
                                 <h2 className="text-lg font-bold">
                                     {game.winnerId === sessionId ? '🏆 Du Vann!' : `🏆 ${game.players.find((p: any) => p.sessionId === game.winnerId)?.name || 'Någon'} Vann!`}

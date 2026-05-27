@@ -9,16 +9,21 @@ export interface Player {
     isOnline: boolean;
     lastSeen: string;
     score: number;
+    is_chooser?: boolean;
 }
 
 export interface HistoryEntry {
     word: string;
-    winner: string | null;
-    chooser: string | null;
+    winner?: string | null;
+    chooser?: string | null;
     total_guesses?: number;
     guessedLetters?: string[];
     wrongGuesses?: number;
     guessLog?: GuessLogEntry[];
+    // Draw specific
+    correctGuessers?: string[];
+    chatLog?: any[];
+    lines?: any[];
 }
 
 export interface GuessLogEntry {

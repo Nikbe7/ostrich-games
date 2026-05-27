@@ -9,8 +9,8 @@ interface PortalLobbyProps {
     user: User;
     onLogout: () => void;
     gameHistory: GameMetadata[];
-    onCreateGame: () => void;
-    onJoinGame: (gameId: string) => void;
+    onCreateGame: (gameType: 'hangman' | 'draw') => void;
+    onJoinGame: (gameType: 'hangman' | 'draw', gameId: string) => void;
     onRejoinGame: (gameId: string) => void;
     onRemoveGame: (gameId: string) => void;
 }
@@ -37,10 +37,10 @@ export default function PortalLobby({
         {
             id: 'draw',
             name: 'Rita & Gissa',
-            description: 'Kommer snart 👀',
+            description: '',
             route: '/draw',
             icon: '🎨',
-            active: false
+            active: true
         }
     ];
 
@@ -119,7 +119,7 @@ export default function PortalLobby({
 
             {/* Game Modal */}
             <AnimatePresence>
-                {selectedGame === 'hangman' && (
+            {selectedGame && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
                         <motion.div
                             initial={{ opacity: 0 }}
@@ -136,10 +136,11 @@ export default function PortalLobby({
                             className="relative w-full max-w-2xl z-10 max-h-[90vh] overflow-y-auto rounded-2xl custom-scrollbar"
                         >
                             <DashboardContent
+                                gameType={selectedGame as 'hangman' | 'draw'}
                                 gameHistory={gameHistory}
                                 onClose={() => setSelectedGame(null)}
-                                onCreateGame={onCreateGame}
-                                onJoinGame={onJoinGame}
+                                onCreateGame={() => onCreateGame(selectedGame as 'hangman' | 'draw')}
+                                onJoinGame={(id) => onJoinGame(selectedGame as 'hangman' | 'draw', id)}
                                 onRejoinGame={onRejoinGame}
                                 onRemoveGame={onRemoveGame}
                             />

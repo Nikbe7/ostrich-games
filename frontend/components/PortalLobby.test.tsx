@@ -24,7 +24,7 @@ vi.mock('./DashboardContent', () => ({
 }));
 
 describe('PortalLobby', () => {
-    const mockUser: User = { username: 'TestPlayer', session_id: '123' };
+    const mockUser: User = { username: 'TestPlayer', id: '123' };
     
     it('renders user information and games', () => {
         render(
@@ -42,7 +42,6 @@ describe('PortalLobby', () => {
         expect(screen.getByText('TestPlayer')).toBeInTheDocument();
         expect(screen.getByText('Hänga Gubbe')).toBeInTheDocument();
         expect(screen.getByText('Rita & Gissa')).toBeInTheDocument();
-        expect(screen.getByText('Kommer Snart')).toBeInTheDocument();
     });
 
     it('opens modal when clicking active game', () => {

@@ -3,15 +3,7 @@ import React from 'react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-interface HistoryEntry {
-    word: string;
-    winner: string | null;
-    chooser: string | null;
-    total_guesses?: number;
-    guessedLetters?: string[];
-    wrongGuesses?: number;
-    guessLog?: any[];
-}
+import { HistoryEntry } from '@/types/game';
 
 interface Player {
     sessionId: string;
@@ -30,7 +22,7 @@ export default function GameHistory({ history, players, onItemClick, selectedInd
 
     if (!history || history.length === 0) return null;
 
-    const getPlayerName = (id: string | null) => {
+    const getPlayerName = (id?: string | null) => {
         if (!id) return 'Någon';
         return players.find(p => p.sessionId === id)?.name || 'Spelare';
     };
@@ -39,7 +31,7 @@ export default function GameHistory({ history, players, onItemClick, selectedInd
 
     const HistoryItem = ({ entry, i }: { entry: HistoryEntry, i: number }) => {
         const isSelected = selectedIndex === i;
-        const isInteractive = !!onItemClick && !!entry.guessedLetters;
+        const isInteractive = !!onItemClick && (!!entry.guessedLetters || !!entry.lines);
 
         return (
             <li
@@ -57,9 +49,11 @@ export default function GameHistory({ history, players, onItemClick, selectedInd
                         {isSelected && <span className="text-[10px] text-brand-primary">Visar</span>}
                     </span>
                     <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded shrink-0">
-                        {entry.winner
-                            ? `🏆 ${entry.wrongGuesses !== undefined ? `${entry.wrongGuesses} fel` : (entry.total_guesses ? `${entry.total_guesses} gissningar` : 'Vann')}`
-                            : '💀 Hängd'}
+                        {entry.correctGuessers !== undefined
+                            ? `${entry.correctGuessers.length} gissade rätt`
+                            : (entry.winner
+                                ? `🏆 ${entry.wrongGuesses !== undefined ? `${entry.wrongGuesses} fel` : (entry.total_guesses ? `${entry.total_guesses} gissningar` : 'Vann')}`
+                                : '💀 Hängd')}
                     </span>
                 </div>
                 <div className="flex justify-between items-end text-[10px] text-gray-400">

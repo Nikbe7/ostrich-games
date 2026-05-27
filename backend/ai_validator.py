@@ -4,8 +4,35 @@ import time
 from typing import Union
 from google import genai
 import logging
+import re
+from typing import Tuple
 
 logger = logging.getLogger("ai_validator")
+
+def is_valid_word_format(word: str) -> Tuple[bool, str]:
+    """Validerar ordets struktur innan vi frågar AI."""
+    word_upper = word.upper().strip()
+    
+    if len(word_upper) < 2:
+        return False, "Ordet är för kort (minst 2 bokstäver)."
+        
+    if len(word_upper) > 20:
+        return False, "Ordet är för långt (max 20 bokstäver)."
+        
+    if not word_upper.isalpha():
+        return False, "Ordet får bara innehålla bokstäver (inga siffror eller mellanslag)."
+        
+    # Check for 3 or more identical consecutive letters (e.g. "AAA")
+    if re.search(r'(.)\1\1', word_upper):
+        return False, "Ordet innehåller tre eller fler likadana bokstäver i rad."
+        
+    # Check for "QWERTY" and other common keyboard mashes
+    mashes = ["QWERTY", "ASDFG", "ZXCVB", "LALALA", "HAHA", "HIHI"]
+    for m in mashes:
+        if m in word_upper:
+            return False, "Ordet ser ut som skräp eller spam."
+            
+    return True, ""
 
 # Load Gemini client
 api_key = os.environ.get("GEMINI_API_KEY")

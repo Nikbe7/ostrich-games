@@ -7,6 +7,7 @@ import { useToast } from '@/components/Toast';
 import { getGameHistory, removeGameFromHistory } from '@/utils/session';
 
 interface DashboardContentProps {
+    gameType: 'hangman' | 'draw';
     gameHistory: GameMetadata[];
     onClose: () => void;
     onCreateGame: () => void;
@@ -16,6 +17,7 @@ interface DashboardContentProps {
 }
 
 export default function DashboardContent({
+    gameType,
     gameHistory,
     onClose,
     onCreateGame,
@@ -37,8 +39,19 @@ export default function DashboardContent({
         onJoinGame(gameIdInput.toUpperCase());
     };
 
-    const allGames = [...gameHistory];
-    localGames.forEach(lg => {
+    let filteredHistory = gameHistory;
+    let filteredLocal = localGames;
+
+    if (gameType === 'draw') {
+        filteredHistory = gameHistory.filter(g => g.id.startsWith('DRAW_'));
+        filteredLocal = localGames.filter(g => g.id.startsWith('DRAW_'));
+    } else {
+        filteredHistory = gameHistory.filter(g => !g.id.startsWith('DRAW_'));
+        filteredLocal = localGames.filter(g => !g.id.startsWith('DRAW_'));
+    }
+
+    const allGames = [...filteredHistory];
+    filteredLocal.forEach(lg => {
         if (!allGames.find(g => g.id === lg.id)) {
             allGames.push(lg);
         }
@@ -61,8 +74,14 @@ export default function DashboardContent({
             >
                 <div className="flex justify-between items-center pb-6 border-b border-brand-primary/20">
                     <div className="flex items-center gap-3">
-                        <img src="/hangman-icon.png" alt="Hänga Gubbe" className="w-10 h-10 object-contain drop-shadow-lg" />
-                        <h2 className="text-2xl font-bold text-white">Hänga Gubbe</h2>
+                        {gameType === 'hangman' ? (
+                            <img src="/hangman-icon.png" alt="Hänga Gubbe" className="w-10 h-10 object-contain drop-shadow-lg" />
+                        ) : (
+                            <span className="text-4xl">🎨</span>
+                        )}
+                        <h2 className="text-2xl font-bold text-white">
+                            {gameType === 'hangman' ? 'Hänga Gubbe' : 'Rita & Gissa'}
+                        </h2>
                     </div>
                     <button
                         onClick={onClose}

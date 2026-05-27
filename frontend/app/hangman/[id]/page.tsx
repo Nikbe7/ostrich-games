@@ -15,6 +15,7 @@ import MobileSidebar from '@/components/MobileSidebar';
 import StatusOverlay from '@/components/StatusOverlay';
 import SoundToggle from '@/components/SoundToggle';
 import { useGameSocket } from '@/hooks/useGameSocket';
+import { useAuth } from '@/hooks/useAuth';
 import { Player, HistoryEntry, Game } from '@/types/game';
 
 const FUN_FACTS = [
@@ -34,12 +35,8 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
     const router = useRouter();
     const gameId = id.toUpperCase();
     const { showToast } = useToast();
-    // Assuming `user` is provided by a `useAuth` hook or similar context,
-    // which is not fully included in the provided snippet but implied by `user?.id`.
-    // For now, `sessionId` will be initialized based on `getSessionId()` as before,
-    // and the `user?.id` part is commented out to avoid an undefined `user` error.
-    // If `useAuth` is intended, it should be imported and initialized.
-    // const sessionId = user?.id || '';
+    const { user } = useAuth();
+    
     const [sessionId, setSessionId] = useState('');
 
 
@@ -51,6 +48,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
 
     const {
         game,
+        trueId,
         isConnected,
         error,
         notification,
@@ -120,8 +118,10 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
         };
     }, [game, viewingHistory]);
 
-    const isChooser = game?.players.find(p => p.sessionId === sessionId)?.sessionId === game?.wordChooser;
-    const isMyTurnToChoose = game?.wordChooser === sessionId && game?.status === 'choosing';
+    const myId = trueId || user?.id || sessionId;
+    const playerMe = game?.players.find(p => p.sessionId === myId || p.sessionId === trueId || p.sessionId === user?.id || p.sessionId === sessionId || p.name === name);
+    const isChooser = game?.wordChooser === myId || game?.wordChooser === trueId || game?.wordChooser === user?.id || game?.wordChooser === sessionId || playerMe?.sessionId === game?.wordChooser || false;
+    const isMyTurnToChoose = isChooser && game?.status === 'choosing';
 
     // Track if this player was the chooser for the current round
     const [hideKeyboard, setHideKeyboard] = useState(true);
