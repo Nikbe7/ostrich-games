@@ -16,6 +16,7 @@ interface DrawChatProps {
 export default function DrawChat({ chatLog = [], onGuess, disabled, isDrawer, guessesUsed = 0, lastHintAt, lockedAt, incorrectGuessCount = 0, hasGuessedCorrectly = false }: DrawChatProps) {
     const [inputValue, setInputValue] = useState('');
     const [lockCountdown, setLockCountdown] = useState<string | null>(null);
+    const [isLockExpired, setIsLockExpired] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll to bottom
@@ -26,12 +27,14 @@ export default function DrawChat({ chatLog = [], onGuess, disabled, isDrawer, gu
     }, [chatLog]);
 
     const MAX_GUESSES = 3;
-    const guessesLeft = Math.max(0, MAX_GUESSES - guessesUsed);
+    const activeGuessesUsed = isLockExpired ? 0 : guessesUsed;
+    const guessesLeft = Math.max(0, MAX_GUESSES - activeGuessesUsed);
     const outOfGuesses = guessesLeft === 0;
 
     useEffect(() => {
-        if (!outOfGuesses || !lockedAt) {
+        if (!lockedAt) {
             setLockCountdown(null);
+            setIsLockExpired(false);
             return;
         }
         
@@ -40,10 +43,12 @@ export default function DrawChat({ chatLog = [], onGuess, disabled, isDrawer, gu
             const remaining = Math.max(0, Math.ceil(unlocksAt - Date.now() / 1000));
             
             if (remaining <= 0) {
-                setLockCountdown("Nu!");
+                setLockCountdown(null);
+                setIsLockExpired(true);
                 return;
             }
             
+            setIsLockExpired(false);
             const m = Math.floor(remaining / 60);
             const s = remaining % 60;
             setLockCountdown(`${m}m ${s}s`);
@@ -52,7 +57,7 @@ export default function DrawChat({ chatLog = [], onGuess, disabled, isDrawer, gu
         updateCountdown();
         const interval = setInterval(updateCountdown, 1000);
         return () => clearInterval(interval);
-    }, [outOfGuesses, lockedAt]);
+    }, [lockedAt]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
