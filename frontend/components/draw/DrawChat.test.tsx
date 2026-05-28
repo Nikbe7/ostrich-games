@@ -1,4 +1,4 @@
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, fireEvent, screen, act } from '@testing-library/react';
 import { expect, test, vi } from 'vitest';
 import DrawChat from './DrawChat';
 
@@ -32,4 +32,30 @@ test('DrawChat disables input if disabled prop is true', () => {
     render(<DrawChat chatLog={[]} onGuess={() => {}} disabled={true} />);
     const input = screen.getByPlaceholderText(/Väntar.../i);
     expect(input).toBeDisabled();
+});
+
+test('DrawChat disables input when user is locked (3 guesses)', () => {
+    const lockedAt = Date.now() / 1000 - 100; // Locked 100 seconds ago
+    render(<DrawChat chatLog={[]} onGuess={() => {}} guessesUsed={3} lockedAt={lockedAt} />);
+    
+    const input = screen.getByRole('textbox');
+    expect(input).toBeDisabled();
+    expect(input.getAttribute('placeholder')).toMatch(/Låst/i);
+});
+
+test('DrawChat enables input when lock expires after 30 minutes', () => {
+    vi.useFakeTimers();
+    const lockedAt = Date.now() / 1000 - 1801; // Locked 30 mins and 1 sec ago
+    render(<DrawChat chatLog={[]} onGuess={() => {}} guessesUsed={3} lockedAt={lockedAt} />);
+    
+    // Advance timers so the setInterval runs and lock is cleared
+    act(() => {
+        vi.advanceTimersByTime(1100);
+    });
+    
+    const input = screen.getByRole('textbox');
+    expect(input).not.toBeDisabled();
+    expect(input.getAttribute('placeholder')).toMatch(/Skriv din gissning här/i);
+    
+    vi.useRealTimers();
 });
