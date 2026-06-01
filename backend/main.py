@@ -244,6 +244,8 @@ async def force_reset(sid, data):
     if game.chooser_timed_out:
         game.force_cancel_choosing()
         await sio.emit('update_game', game.get_state_for_frontend(), room=game_id)
+    elif hasattr(game, 'check_time_up') and game.check_time_up():
+        await sio.emit('update_game', game.get_state_for_frontend(), room=game_id)
 
 @sio.event
 async def disconnect(sid):

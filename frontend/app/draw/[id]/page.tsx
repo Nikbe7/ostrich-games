@@ -65,7 +65,7 @@ import GameHistory from '@/components/GameHistory';
 import { useDrawSocket } from '@/hooks/useDrawSocket';
 import { useToast } from '@/components/Toast';
 import { useAuth } from '@/hooks/useAuth';
-const RoundTimer = ({ deadline, startedAt }: { deadline: number | null, startedAt?: number | null }) => {
+const RoundTimer = ({ deadline, startedAt, onExpire }: { deadline: number | null, startedAt?: number | null, onExpire?: () => void }) => {
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
     useEffect(() => {
@@ -86,6 +86,12 @@ const RoundTimer = ({ deadline, startedAt }: { deadline: number | null, startedA
         const interval = setInterval(updateTimer, 1000);
         return () => clearInterval(interval);
     }, [deadline, startedAt]);
+
+    useEffect(() => {
+        if (timeLeft === 0 && onExpire) {
+            onExpire();
+        }
+    }, [timeLeft, onExpire]);
 
     // Display loading state if null to avoid it suddenly popping in or being hidden
     if (timeLeft === null) {
@@ -327,7 +333,13 @@ export default function DrawGamePage({ params }: { params: Promise<{ id: string 
                                         </div>
                                         {!viewingHistory && (
                                             <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                                                <RoundTimer deadline={game.drawingDeadline || null} startedAt={game.drawingStartedAt || null} />
+                                                <RoundTimer 
+                                                    deadline={game.drawingDeadline || null} 
+                                                    startedAt={game.drawingStartedAt || null} 
+                                                    onExpire={() => {
+                                                        if (game.status === 'drawing') forceReset();
+                                                    }}
+                                                />
                                             </div>
                                         )}
                                     </>

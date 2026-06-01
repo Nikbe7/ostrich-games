@@ -34,7 +34,8 @@ export default function Home() {
             const lastGameId = getLastGameId();
             if (lastGameId) {
                 // Use replace instead of push to avoid history warnings and maintain a clean back-button experience
-                router.replace(`/hangman/${lastGameId}`);
+                const gameType = lastGameId.toUpperCase().startsWith('DRAW_') ? 'draw' : 'hangman';
+                router.replace(`/${gameType}/${lastGameId}`);
                 return;
             }
             setReady(true);
