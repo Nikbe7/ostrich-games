@@ -4,6 +4,7 @@ import { Stroke, Point } from '@/types/draw';
 interface CanvasProps {
     lines: Stroke[];
     onDrawEnd?: (stroke: Stroke) => void;
+    onUndo?: () => void;
     isDrawer: boolean;
     color: string;
     thickness: number;
@@ -11,7 +12,7 @@ interface CanvasProps {
     duration?: number;
 }
 
-export default function Canvas({ lines = [], isDrawer, color, thickness, onDrawEnd, startedAt, duration = 180 }: CanvasProps) {
+export default function Canvas({ lines = [], isDrawer, color, thickness, onDrawEnd, onUndo, startedAt, duration = 180 }: CanvasProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [currentStroke, setCurrentStroke] = useState<Stroke | null>(null);
@@ -35,6 +36,21 @@ export default function Canvas({ lines = [], isDrawer, color, thickness, onDrawE
         const timer = setInterval(updateTimer, 1000);
         return () => clearInterval(timer);
     }, [startedAt, duration]);
+
+    // Handle Ctrl+Z for undo
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                e.preventDefault();
+                if (isDrawer && onUndo && localTimeLeft !== 0) {
+                    onUndo();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isDrawer, onUndo, localTimeLeft]);
 
     // Redraw everything when lines change
     useEffect(() => {

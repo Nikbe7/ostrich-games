@@ -151,6 +151,7 @@ export default function DrawGamePage({ params }: { params: Promise<{ id: string 
         showConfetti,
         drawLine,
         clearCanvas,
+        undoLine,
         abandonRound,
         chatGuess,
         submitWord,
@@ -449,6 +450,7 @@ export default function DrawGamePage({ params }: { params: Promise<{ id: string 
                                             color={color}
                                             thickness={thickness}
                                             onDrawEnd={drawLine}
+                                            onUndo={undoLine}
                                             startedAt={(!viewingHistory && game.status === 'drawing') ? (game.drawingStartedAt || undefined) : undefined}
                                         />
                                         {!viewingHistory && isChooser && isDrawingPhase && (

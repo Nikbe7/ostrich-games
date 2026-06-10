@@ -269,6 +269,21 @@ async def draw_line(sid, data):
         await sio.emit('draw_line_update', data.get('line'), room=game_id, skip_sid=sid)
 
 @sio.event
+async def undo_line(sid, data):
+    game_id = data.get('gameId')
+    if not game_id or not game_id.lower().startswith('draw_'): return
+    session = await sio.get_session(sid)
+    user = session.get('user')
+    uuid = user['id'] if user else data.get('sessionId')
+    
+    if uuid:
+        game = draw_game_lobby.get_game(game_id)
+        if game:
+            success = game.undo_line(uuid)
+            if success:
+                await sio.emit('update_game', game.get_state_for_frontend(), room=game_id)
+
+@sio.event
 async def clear_canvas(sid, data):
     game_id = data.get('gameId')
     if not game_id or not game_id.lower().startswith('draw_'): return

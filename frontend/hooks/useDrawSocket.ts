@@ -140,6 +140,15 @@ export function useDrawSocket(gameId: string, sessionId: string, name: string) {
         socket?.emit('clear_canvas', { gameId, sessionId });
     }, [socket, gameId, sessionId, game?.status]);
 
+    const undoLine = useCallback(() => {
+        if (game?.status !== 'drawing') return;
+        setGame(prev => {
+            if (!prev || prev.lines.length === 0) return prev;
+            return { ...prev, lines: prev.lines.slice(0, -1) };
+        });
+        socket?.emit('undo_line', { gameId, sessionId });
+    }, [socket, gameId, sessionId, game?.status]);
+
     const abandonRound = useCallback(() => {
         if (game?.status !== 'drawing') return;
         socket?.emit('abandon_draw_game', { gameId, sessionId });
@@ -182,6 +191,7 @@ export function useDrawSocket(gameId: string, sessionId: string, name: string) {
         secretWord,
         drawLine,
         clearCanvas,
+        undoLine,
         abandonRound,
         chatGuess,
         submitWord,

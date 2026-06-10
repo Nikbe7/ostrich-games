@@ -271,6 +271,15 @@ class DrawGameManager:
         self.lines.append(line)
         self._update_activity()
 
+    def undo_line(self, uuid: str) -> bool:
+        if self.status != 'drawing': return False
+        if self.chooser_id != uuid: return False
+        if self.drawer_time_left <= 0: return False
+        if len(self.lines) == 0: return False
+        self.lines.pop()
+        self._update_activity()
+        return True
+
     def clear_canvas(self, uuid: str):
         if self.status != 'drawing': return
         if self.chooser_id != uuid: return
