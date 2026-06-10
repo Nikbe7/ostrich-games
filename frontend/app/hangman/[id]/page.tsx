@@ -42,6 +42,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
 
     const [name, setName] = useState('');
     const [wordInput, setWordInput] = useState('');
+    const [validatingWord, setValidatingWord] = useState<string | null>(null);
     const [showMobileSidebar, setShowMobileSidebar] = useState(false);
     const [funFactIndex, setFunFactIndex] = useState(0);
     const [viewingHistory, setViewingHistory] = useState<HistoryEntry | null>(null);
@@ -137,6 +138,12 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
         clearLastGameId();
         router.push('/');
     };
+
+    useEffect(() => {
+        if (error || game?.status === 'playing') {
+            setValidatingWord(null);
+        }
+    }, [error, game?.status]);
 
     return (
         <div className="game-layout bg-transparent text-white relative">
@@ -284,31 +291,48 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
                                 )}
                                 {isMyTurnToChoose && (
                                     <div className="w-full max-w-md bg-brand-card/80 backdrop-blur-md p-5 rounded-xl shadow-xl border border-brand-primary/30 animate-fadeIn">
-                                        <form onSubmit={(e) => { e.preventDefault(); submitWord(wordInput); setWordInput(''); }} className="flex flex-col gap-4">
-                                            <label className="text-sm font-medium text-gray-300 text-center">Skriv ett ord för de andra att gissa:</label>
-                                            <div className="relative">
-                                                <input
-                                                    id="wordInput"
-                                                    name="wordInput"
-                                                    type="text"
-                                                    value={wordInput}
-                                                    onChange={(e) => setWordInput(e.target.value.replace(/[^a-zA-ZåäöÅÄÖ]/g, ''))}
-                                                    className="w-full p-3 pl-4 pr-12 rounded-lg bg-black/50 border border-white/10 text-white font-mono text-lg tracking-[0.2em] uppercase focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-colors"
-                                                    placeholder="HEMLIGT..."
-                                                    autoFocus
-                                                    maxLength={25}
-                                                />
-                                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono">{wordInput.length}</span>
+                                        {validatingWord ? (
+                                            <div className="flex flex-col items-center justify-center space-y-4 py-8">
+                                                <div className="w-12 h-12 border-4 border-brand-primary border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(var(--brand-primary-rgb),0.5)]"></div>
+                                                <div className="text-lg font-bold text-gray-300 drop-shadow-md">
+                                                    Validerar <span className="text-white">'{validatingWord}'</span> med AI...
+                                                </div>
                                             </div>
-                                            <button
-                                                type="submit"
-                                                disabled={wordInput.length < 2}
-                                                className="bg-brand-primary hover:bg-brand-primaryHover disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed py-3 rounded-lg font-bold transition-all transform active:scale-95 shadow-lg relative overflow-hidden group"
-                                            >
-                                                <span className="relative z-10 flex items-center justify-center gap-2">✅ Välj Ord</span>
-                                                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
-                                            </button>
-                                        </form>
+                                        ) : (
+                                            <form onSubmit={(e) => { 
+                                                e.preventDefault(); 
+                                                const word = wordInput.trim();
+                                                if (word) {
+                                                    setValidatingWord(word);
+                                                    submitWord(word); 
+                                                    setWordInput(''); 
+                                                }
+                                            }} className="flex flex-col gap-4">
+                                                <label className="text-sm font-medium text-gray-300 text-center">Skriv ett ord för de andra att gissa:</label>
+                                                <div className="relative">
+                                                    <input
+                                                        id="wordInput"
+                                                        name="wordInput"
+                                                        type="text"
+                                                        value={wordInput}
+                                                        onChange={(e) => setWordInput(e.target.value.replace(/[^a-zA-ZåäöÅÄÖ]/g, ''))}
+                                                        className="w-full p-3 pl-4 pr-12 rounded-lg bg-black/50 border border-white/10 text-white font-mono text-lg tracking-[0.2em] uppercase focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-colors"
+                                                        placeholder="HEMLIGT..."
+                                                        autoFocus
+                                                        maxLength={25}
+                                                    />
+                                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono">{wordInput.length}</span>
+                                                </div>
+                                                <button
+                                                    type="submit"
+                                                    disabled={wordInput.length < 2}
+                                                    className="bg-brand-primary hover:bg-brand-primaryHover disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed py-3 rounded-lg font-bold transition-all transform active:scale-95 shadow-lg relative overflow-hidden group"
+                                                >
+                                                    <span className="relative z-10 flex items-center justify-center gap-2">✅ Välj Ord</span>
+                                                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+                                                </button>
+                                            </form>
+                                        )}
                                     </div>
                                 )}
                                 {(displayGame.status === 'playing' || displayGame.status === 'finished') && (
