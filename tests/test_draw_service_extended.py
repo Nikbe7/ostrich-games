@@ -32,44 +32,13 @@ async def test_choose_word(draw_game: DrawGameManager):
     
     draw_game.status = "choosing"
     
-    # Invalid format
-    with patch('backend.ai_validator.is_valid_word_format', return_value=(False, "Ogiltigt format")):
-        success, msg = await draw_game.choose_word("user1", "T E S T")
-        assert not success
-        assert "Ogiltigt format" in msg
-        
-    # Valid word locally
-    with patch('backend.ai_validator.is_valid_word_format', return_value=(True, "")):
-        with patch('backend.services.draw_service._valid_words_set', {"KATT"}):
-            success, msg = await draw_game.choose_word("user1", "KATT")
-            assert success
-            assert draw_game.word == "KATT"
-            assert draw_game.status == "drawing"
-            assert draw_game.word_difficulty == "easy" # KATT is easy
-            
-@pytest.mark.asyncio
-async def test_choose_word_ai_validator(draw_game: DrawGameManager):
     draw_game.status = "choosing"
-    draw_game.chooser_id = "user1"
-    draw_game.save_to_db = MagicMock()
     
-    with patch('backend.ai_validator.is_valid_word_format', return_value=(True, "")):
-        with patch('backend.services.draw_service._valid_words_set', set()):
-            # Mock AI validator
-            with patch('backend.ai_validator.validate_word_with_ai', return_value=True):
-                # Also mock supabase to prevent actual insert
-                with patch('backend.services.draw_service.supabase') as mock_supa:
-                    success, msg = await draw_game.choose_word("user1", "AINEWWORD")
-                    assert success
-                    assert draw_game.word == "AINEWWORD"
-                    assert draw_game.word_difficulty == "medium" # default
-                    
-            # AI rejects
-            draw_game.status = "choosing"
-            with patch('backend.ai_validator.validate_word_with_ai', return_value=False):
-                success, msg = await draw_game.choose_word("user1", "BADWORD")
-                assert not success
-                assert "godkändes inte" in msg
+    success, msg = await draw_game.choose_word("user1", "KATT")
+    assert success
+    assert draw_game.word == "KATT"
+    assert draw_game.status == "drawing"
+    assert draw_game.word_difficulty == "easy" # KATT is easy
 
 def test_save_and_load_db(draw_game: DrawGameManager):
     # Setup some state

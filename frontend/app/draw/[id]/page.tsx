@@ -138,7 +138,6 @@ export default function DrawGamePage({ params }: { params: Promise<{ id: string 
     const [thickness, setThickness] = useState(6);
     const [showSecretWordUI, setShowSecretWordUI] = useState(false);
     const [wordChoices, setWordChoices] = useState<string[]>([]);
-    const [validatingWord, setValidatingWord] = useState<string | null>(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [viewingHistory, setViewingHistory] = useState<any>(null);
 
@@ -206,12 +205,6 @@ export default function DrawGamePage({ params }: { params: Promise<{ id: string 
         clearLastGameId();
         router.push('/');
     };
-
-    useEffect(() => {
-        if (error || game?.status === 'drawing') {
-            setValidatingWord(null);
-        }
-    }, [error, game?.status]);
 
     const myId = trueId || user?.id || sessionId;
     const playerMe = game?.players.find(p => p.sessionId === myId || p.sessionId === trueId || p.sessionId === user?.id || p.sessionId === sessionId || p.name === name);
@@ -380,14 +373,7 @@ export default function DrawGamePage({ params }: { params: Promise<{ id: string 
                                                 </div>
                                             </div>
                                             
-                                            {validatingWord ? (
-                                                <div className="flex flex-col items-center justify-center space-y-4 py-8">
-                                                    <div className="w-12 h-12 border-4 border-brand-primary border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(var(--brand-primary-rgb),0.5)]"></div>
-                                                    <div className="text-lg font-bold text-gray-300 drop-shadow-md">
-                                                        Validerar <span className="text-white">'{validatingWord}'</span> med AI...
-                                                    </div>
-                                                </div>
-                                            ) : wordChoices.length === 0 ? (
+                                            {wordChoices.length === 0 ? (
                                                 <div className="flex justify-center p-8">
                                                     <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
                                                 </div>
@@ -401,7 +387,6 @@ export default function DrawGamePage({ params }: { params: Promise<{ id: string 
                                                             <button
                                                                 key={i}
                                                                 onClick={() => {
-                                                                    setValidatingWord(choice);
                                                                     submitWord(choice);
                                                                 }}
                                                                 className="group w-full py-4 px-6 bg-black/40 hover:bg-brand-primary/20 border border-white/10 hover:border-brand-primary/50 text-white font-bold text-xl rounded-xl transition-all duration-200 transform hover:-translate-y-1 hover:shadow-lg flex items-center justify-between"

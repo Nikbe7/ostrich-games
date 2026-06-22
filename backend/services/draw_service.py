@@ -200,8 +200,6 @@ class DrawGameManager:
 
     async def choose_word(self, uuid: str, word: str) -> Tuple[bool, str]:
         self._update_activity()
-        from ..ai_validator import validate_word_with_ai
-        from ..ai_validator import validate_word_with_ai, is_valid_word_format
         
         if self.status != 'choosing':
             return False, "Spelet väntar inte på ett ordval just nu."
@@ -209,33 +207,7 @@ class DrawGameManager:
         if self.chooser_id != uuid:
             return False, "Det är inte din tur att välja ord."
             
-        format_valid, format_msg = is_valid_word_format(word)
-        if not format_valid:
-            return False, format_msg
-            
         word_upper = word.upper().strip()
-        is_valid = False
-        
-        if word_upper in _valid_words_set:
-            is_valid = True
-        else:
-            self.dynamic_ai_status = f"Validerar '{word_upper}' med AI..."
-            is_valid = await validate_word_with_ai(word_upper)
-            self.dynamic_ai_status = None
-            
-            if is_valid:
-                _valid_words_set.add(word_upper)
-                _valid_words_list.append(word_upper)
-                try:
-                    supabase.table('app_words').insert({'word': word_upper}).execute()
-                except Exception as e:
-                    pass
-                    
-        if not is_valid:
-            if is_valid == "RATE_LIMITED":
-                is_valid = True
-            else:
-                return False, f"Ordet '{word_upper}' finns inte i ordlistan eller godkändes inte av AI."
 
         self.word = word_upper
         self.status = 'drawing'
