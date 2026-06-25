@@ -98,7 +98,7 @@ async def validate_word_with_ai(word: str) -> Union[bool, str]:
         # We use asyncio.to_thread because the genai client's generate_content is synchronous
         response = await asyncio.to_thread(
             client.models.generate_content,
-            model='gemini-2.0-flash',
+            model='gemini-3.1-flash-lite-preview',
             contents=prompt,
         )
         
