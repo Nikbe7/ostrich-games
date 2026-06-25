@@ -53,12 +53,29 @@ export function useDrawSocket(gameId: string, sessionId: string, name: string) {
         prevGameRef.current = game;
     }, [game, playWin, playLoss, playCorrect, playWrong]);
 
+    const trueIdRef = useRef<string | null>(null);
+    useEffect(() => { trueIdRef.current = trueId; }, [trueId]);
+    
+    const sessionIdRef = useRef<string>(sessionId);
+    useEffect(() => { sessionIdRef.current = sessionId; }, [sessionId]);
+
     useEffect(() => {
         if (!socket) return;
 
         const handleUpdate = (updatedGame: DrawGame) => {
             if (updatedGame.gameId !== gameId) return;
-            setGame(updatedGame);
+            setGame(prev => {
+                const currentTrueId = trueIdRef.current;
+                const currentSessionId = sessionIdRef.current;
+                const isDrawer = prev && prev.wordChooser && (prev.wordChooser === currentTrueId || prev.wordChooser === currentSessionId);
+                
+                // If I am the drawer, and we are actively drawing, my local lines are the absolute source of truth.
+                // This prevents older delayed update_game events from overwriting my optimistic UI updates (drawing, undoing, clearing).
+                if (isDrawer && prev.status === 'drawing' && updatedGame.status === 'drawing') {
+                    return { ...updatedGame, lines: prev.lines };
+                }
+                return updatedGame;
+            });
             setError('');
         };
 
