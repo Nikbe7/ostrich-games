@@ -2,7 +2,7 @@ import os
 import asyncio
 import time
 from typing import Union
-from google import genai
+import httpx
 import logging
 import re
 from typing import Tuple
@@ -34,13 +34,12 @@ def is_valid_word_format(word: str) -> Tuple[bool, str]:
             
     return True, ""
 
-# Load Gemini client
-api_key = os.environ.get("GEMINI_API_KEY")
-client = None
+# Gemini Interactions API configuration
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
+INTERACTIONS_API_URL = "https://generativelanguage.googleapis.com/v1beta/interactions"
 
-if api_key:
-    client = genai.Client(api_key=api_key)
-else:
+if not GEMINI_API_KEY:
     logger.warning("GEMINI_API_KEY not found in environment. AI Word Validation will be disabled.")
 
 class AIRateLimiter:
@@ -74,9 +73,10 @@ ai_limiter = AIRateLimiter()
 async def validate_word_with_ai(word: str) -> Union[bool, str]:
     """
     Checks if a given word is a valid Swedish word according to Gemini.
+    Uses the Gemini Interactions API (replaces deprecated generateContent).
     Returns True if valid, False if invalid, or "RATE_LIMITED" if quota exceeded.
     """
-    if not client:
+    if not GEMINI_API_KEY:
         return False
 
     # Check rate limit first
@@ -94,18 +94,47 @@ async def validate_word_with_ai(word: str) -> Union[bool, str]:
         f"Svara ENBART med ordet 'JA' eller 'NEJ'. Förklara ingenting, skriv inga andra tecken."
     )
     
+    headers = {
+        "x-goog-api-key": GEMINI_API_KEY,
+        "Content-Type": "application/json",
+    }
+    
+    payload = {
+        "model": GEMINI_MODEL,
+        "input": prompt,
+    }
+    
     try:
-        # We use asyncio.to_thread because the genai client's generate_content is synchronous
-        response = await asyncio.to_thread(
-            client.models.generate_content,
-            model='gemini-3.1-flash-lite-preview',
-            contents=prompt,
-        )
+        async with httpx.AsyncClient() as http_client:
+            response = await http_client.post(
+                INTERACTIONS_API_URL,
+                headers=headers,
+                json=payload,
+                timeout=15.0,
+            )
         
-        if not response or not response.text:
+        if response.status_code == 429:
+            logger.warning("AI Rate Limit (Gemini API 429) hit for word '%s'", word)
+            return "RATE_LIMITED"
+            
+        if response.status_code != 200:
+            logger.error("Interactions API error %d for word '%s': %s", response.status_code, word, response.text[:300])
+            return False
+        
+        data = response.json()
+        
+        # Extract the model_output text from the interaction steps
+        answer_text = ""
+        for step in data.get("steps", []):
+            if step.get("type") == "model_output":
+                for content_block in step.get("content", []):
+                    if content_block.get("type") == "text":
+                        answer_text += content_block.get("text", "")
+        
+        if not answer_text:
             return False
 
-        answer = response.text.strip().upper()
+        answer = answer_text.strip().upper()
         # Clean out any punctuation
         answer = "".join(c for c in answer if c.isalpha())
         
@@ -114,7 +143,7 @@ async def validate_word_with_ai(word: str) -> Union[bool, str]:
         elif answer == "NEJ":
             return False
         else:
-            logger.warning("AI Validator returned unexpected response: '%s' for word '%s'", response.text, word)
+            logger.warning("AI Validator returned unexpected response: '%s' for word '%s'", answer_text, word)
             return False
             
     except Exception as e:
