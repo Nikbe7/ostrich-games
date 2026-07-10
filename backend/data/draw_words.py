@@ -83,7 +83,9 @@ DRAW_WORDS = {
         # === Djur, Mat & Personer ===
         "Kattunge", "Hundvalp", "Padda", "Tjur",
         "Köttbulle", "Makaroner", "Mjöl", "Ketchup", "Senap", "Biff", "Ris", "Nudlar",
-        "Albert Einstein", "Zlatan", "Elvis Presley", "Michael Jackson"
+        "Albert Einstein", "Zlatan", "Elvis Presley", "Michael Jackson",
+        # === Varumärken ===
+        "Volvo", "Tesla", "Nike", "Adidas", "Apple", "Google", "McDonalds", "IKEA"
     ],
     "medium": [
         # === Föremål som kräver specifika detaljer ===
@@ -160,7 +162,10 @@ DRAW_WORDS = {
         # === Djur, Mat & Personer ===
         "Näbbdjur", "Lemur", "Vildsvin", "Mås",
         "Kaviar", "Avokado", "Granatäpple", "Kiwi", "Spaghetti", "Lasagne", "Sushi", "Burrito",
-        "Astrid Lindgren", "Marilyn Monroe", "Abraham Lincoln", "Charlie Chaplin", "Cleopatra"
+        "Astrid Lindgren", "Marilyn Monroe", "Abraham Lincoln", "Charlie Chaplin", "Cleopatra",
+        # === Varumärken ===
+        "Ferrari", "BMW", "Audi", "Volkswagen", "Gucci", "Chanel", "H&M", "Puma", 
+        "Microsoft", "Samsung", "Sony", "Nintendo", "Lego", "Rolex"
 
         # === Fantasi & Mytologi (har tydlig visuell form) ===
         "Drake", "Enhörning", "Spöke", "Vampyr", "Zombie", "Mumie",
@@ -308,6 +313,9 @@ DRAW_WORDS = {
         # === Djur, Mat & Personer ===
         "Dodo", "Sabeltandad tiger", "Mammut",
         "Kroppkakor", "Surströmming", "Kräftskiva",
-        "Carl von Linné", "Gustav Vasa", "Alfred Nobel", "Marie Curie", "Leonardo da Vinci", "William Shakespeare"
+        "Carl von Linné", "Gustav Vasa", "Alfred Nobel", "Marie Curie", "Leonardo da Vinci", "William Shakespeare",
+        # === Varumärken ===
+        "Lamborghini", "Porsche", "Toyota", "Prada", "Louis Vuitton", "Balenciaga", 
+        "Coca-Cola", "Pepsi", "Gillette"
     ]
 }
