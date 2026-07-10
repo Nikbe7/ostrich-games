@@ -78,7 +78,8 @@ DRAW_WORDS = {
         "Koja", "Vindskydd", "Friggebod", "Vedbod", "Hundkoja",
         "Kuvert", "Frimärke", "Affisch", "Skylt", "Flagga",
         # === Nya ord ===
-        "Nyckelpigemönster", "Bokstav", "Siffra", "Bokhylla", "Vägg", "Golv", "Snögubbe", "Snöboll", "Tärning"
+        "Nyckelpigemönster", "Bokstav", "Siffra", "Bokhylla", "Vägg", "Golv", "Snögubbe", "Snöboll", "Tärning",
+        "Lök", "Håv", "Blad", "Vattenpöl", "Kapsyl", "Sten", "Mynt", "Grus", "Knapp", "Nål"
     ],
     "medium": [
         # === Föremål som kräver specifika detaljer ===
@@ -150,7 +151,8 @@ DRAW_WORDS = {
         "Domare", "Servitör", "Smed", "Urmakare",
         "Fotograf", "Konstnär", "Skulptör", "Musiker",
         # === Nya ord ===
-        "Tandläkare", "Kirurg", "Veterinär", "Författare", "Skådespelare", "Simbassäng", "Badkar", "Soptunna", "Lykstolpe", "Busskur"
+        "Tandläkare", "Kirurg", "Veterinär", "Författare", "Skådespelare", "Simbassäng", "Badkar", "Soptunna", "Lykstolpe", "Busskur",
+        "Korsord", "Pusselbit", "Skosnöre", "Tvättlina", "Klädnypa", "Konservburk", "Dörrhandtag", "Säkerhetsbälte", "Videoband", "Bokmärke"
 
         # === Fantasi & Mytologi (har tydlig visuell form) ===
         "Drake", "Enhörning", "Spöke", "Vampyr", "Zombie", "Mumie",
@@ -293,6 +295,7 @@ DRAW_WORDS = {
         "Berg-och-dalbana", "Pariserhjul", "Cirkustält",
         "Trollerihatt", "Kristallkula", "Tarotkort",
         # === Nya ord ===
-        "Tidsmaskin", "Parallellt universum", "Telepati", "Kvantfysik", "Astronomi", "Bioteknik"
+        "Tidsmaskin", "Parallellt universum", "Telepati", "Kvantfysik", "Astronomi", "Bioteknik",
+        "Ekonomi", "Psykologi", "Biologi", "Fysik", "Kemi", "Grammatik", "Matematik", "Politik", "Filosofi", "Kloning"
     ]
 }
