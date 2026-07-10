@@ -76,7 +76,9 @@ DRAW_WORDS = {
         "Kyrka", "Tält", "Igloo", "Stuga", "Slott", "Torn",
         "Fyr", "Kvarn", "Lada", "Garage",
         "Koja", "Vindskydd", "Friggebod", "Vedbod", "Hundkoja",
-        "Kuvert", "Frimärke", "Affisch", "Skylt", "Flagga"
+        "Kuvert", "Frimärke", "Affisch", "Skylt", "Flagga",
+        # === Nya ord ===
+        "Nyckelpigemönster", "Bokstav", "Siffra", "Bokhylla", "Vägg", "Golv", "Snögubbe", "Snöboll", "Tärning"
     ],
     "medium": [
         # === Föremål som kräver specifika detaljer ===
@@ -147,6 +149,8 @@ DRAW_WORDS = {
         "Häxa", "Trollkarl", "Tomte", "Ängel",
         "Domare", "Servitör", "Smed", "Urmakare",
         "Fotograf", "Konstnär", "Skulptör", "Musiker",
+        # === Nya ord ===
+        "Tandläkare", "Kirurg", "Veterinär", "Författare", "Skådespelare", "Simbassäng", "Badkar", "Soptunna", "Lykstolpe", "Busskur"
 
         # === Fantasi & Mytologi (har tydlig visuell form) ===
         "Drake", "Enhörning", "Spöke", "Vampyr", "Zombie", "Mumie",
@@ -287,6 +291,8 @@ DRAW_WORDS = {
         "Kulstötning", "Släggkastning", "Spjutkastning",
         "Stavhopp", "Häcklöpning", "Diskuskastning",
         "Berg-och-dalbana", "Pariserhjul", "Cirkustält",
-        "Trollerihatt", "Kristallkula", "Tarotkort"
+        "Trollerihatt", "Kristallkula", "Tarotkort",
+        # === Nya ord ===
+        "Tidsmaskin", "Parallellt universum", "Telepati", "Kvantfysik", "Astronomi", "Bioteknik"
     ]
 }
