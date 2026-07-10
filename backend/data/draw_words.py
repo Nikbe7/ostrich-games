@@ -79,7 +79,11 @@ DRAW_WORDS = {
         "Kuvert", "Frimärke", "Affisch", "Skylt", "Flagga",
         # === Nya ord ===
         "Nyckelpigemönster", "Bokstav", "Siffra", "Bokhylla", "Vägg", "Golv", "Snögubbe", "Snöboll", "Tärning",
-        "Lök", "Håv", "Blad", "Vattenpöl", "Kapsyl", "Sten", "Mynt", "Grus", "Knapp", "Nål"
+        "Lök", "Håv", "Blad", "Vattenpöl", "Kapsyl", "Sten", "Mynt", "Grus", "Knapp", "Nål",
+        # === Djur, Mat & Personer ===
+        "Kattunge", "Hundvalp", "Padda", "Tjur",
+        "Köttbulle", "Makaroner", "Mjöl", "Ketchup", "Senap", "Biff", "Ris", "Nudlar",
+        "Albert Einstein", "Zlatan", "Elvis Presley", "Michael Jackson"
     ],
     "medium": [
         # === Föremål som kräver specifika detaljer ===
@@ -152,7 +156,11 @@ DRAW_WORDS = {
         "Fotograf", "Konstnär", "Skulptör", "Musiker",
         # === Nya ord ===
         "Tandläkare", "Kirurg", "Veterinär", "Författare", "Skådespelare", "Simbassäng", "Badkar", "Soptunna", "Lykstolpe", "Busskur",
-        "Korsord", "Pusselbit", "Skosnöre", "Tvättlina", "Klädnypa", "Konservburk", "Dörrhandtag", "Säkerhetsbälte", "Videoband", "Bokmärke"
+        "Korsord", "Pusselbit", "Skosnöre", "Tvättlina", "Klädnypa", "Konservburk", "Dörrhandtag", "Säkerhetsbälte", "Videoband", "Bokmärke",
+        # === Djur, Mat & Personer ===
+        "Näbbdjur", "Lemur", "Vildsvin", "Mås",
+        "Kaviar", "Avokado", "Granatäpple", "Kiwi", "Spaghetti", "Lasagne", "Sushi", "Burrito",
+        "Astrid Lindgren", "Marilyn Monroe", "Abraham Lincoln", "Charlie Chaplin", "Cleopatra"
 
         # === Fantasi & Mytologi (har tydlig visuell form) ===
         "Drake", "Enhörning", "Spöke", "Vampyr", "Zombie", "Mumie",
@@ -296,6 +304,10 @@ DRAW_WORDS = {
         "Trollerihatt", "Kristallkula", "Tarotkort",
         # === Nya ord ===
         "Tidsmaskin", "Parallellt universum", "Telepati", "Kvantfysik", "Astronomi", "Bioteknik",
-        "Ekonomi", "Psykologi", "Biologi", "Fysik", "Kemi", "Grammatik", "Matematik", "Politik", "Filosofi", "Kloning"
+        "Ekonomi", "Psykologi", "Biologi", "Fysik", "Kemi", "Grammatik", "Matematik", "Politik", "Filosofi", "Kloning",
+        # === Djur, Mat & Personer ===
+        "Dodo", "Sabeltandad tiger", "Mammut",
+        "Kroppkakor", "Surströmming", "Kräftskiva",
+        "Carl von Linné", "Gustav Vasa", "Alfred Nobel", "Marie Curie", "Leonardo da Vinci", "William Shakespeare"
     ]
 }
